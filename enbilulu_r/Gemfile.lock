@@ -1,0 +1,19 @@
+PATH
+  remote: .
+  specs:
+    enbilulu (0.0.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    sqlite3 (1.3.13)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  enbilulu!
+  sqlite3 (~> 1.3)
+
+BUNDLED WITH
+   1.16.1

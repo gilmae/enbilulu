@@ -5,14 +5,14 @@ module Enbilulu
     INIT = <<-eos
        create table droplets (
            id integer PRIMARY KEY AUTOINCREMENT, 
-           created_at datetime, 
+           created_at datetime default (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')), 
            payload text
         );
     eos
 
     INSERT_DATA = <<-eos
-        insert into droplets (created_at, payload)
-        values (datetime(),?)
+        insert into droplets (payload)
+        values (?)
     eos
 
     GET_POINT_BEFORE_X = <<-eos
@@ -38,11 +38,15 @@ module Enbilulu
         limit ?
     eos
 
-    def create name
-        raise ArgumentError.new("Stream already exists.") if File.exists?(name)  
+    def create brook
+        raise ArgumentError.new("Stream already exists.") if exists?(brook)  
 
-        db = SQLite3::Database.new name
+        db = SQLite3::Database.new brook
         db.execute INIT
+    end
+
+    def exists? brook
+        File.exists?(brook) 
     end
 
     def put_record brook, data
@@ -52,8 +56,8 @@ module Enbilulu
         db.last_insert_row_id()
     end
 
-    def get_stream_point name, config
-        db = get_db name
+    def get_stream_point brook, config
+        db = get_db brook
         db.results_as_hash = true
 
         case config[:type]
@@ -82,8 +86,8 @@ module Enbilulu
         end
     end
 
-    def get_records name, point, count
-        db = get_db name
+    def get_records brook, point, count
+        db = get_db brook
         db.results_as_hash = true
         points = db.execute(GET_POINTS, point, count)
 
@@ -95,11 +99,20 @@ module Enbilulu
             }
         end
 
-        next_point = get_stream_point name, {:type=>:after_point, :starting_point=>data.last[:sequence_number]}
+        if data && data.length > 0
+            last_point = data.last[:sequence_number]
+            next_point = get_stream_point brook, {:type=>:after_point, :starting_point=>last_point}
+            milliseconds_behind = ((Time.now - data.last[:created_at])*1000).to_i
+        else
+            last_point = nil
+            next_point = point
+            milliseconds_behind = 0
+        end
 
         {
+            :last_point => last_point,
             :next_point => next_point,
-            :milliseconds_behind => ((Time.now - data.last[:created_at])*1000).to_i,
+            :milliseconds_behind => milliseconds_behind,
             :records => data
         }
 
@@ -107,7 +120,7 @@ module Enbilulu
 
     private
     def get_db name
-        raise ArgumentError.new("Stream does not exist.") if !File.exists?(name) 
+        raise ArgumentError.new("Stream does not exist.") if !exists?(name) 
         SQLite3::Database.new name
     end
 
@@ -118,5 +131,4 @@ module Enbilulu
         return nil if record["id"] == nil
         return record["id"].to_i
     end
-
 end
