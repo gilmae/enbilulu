@@ -89,7 +89,6 @@ namespace Enbilulu
             }
         }
 
-
         private string ValidateStreamExists(string streamName)
         {
             if (string.IsNullOrEmpty(streamName))
@@ -180,7 +179,7 @@ namespace Enbilulu
             }
         }
 
-        public int PutRecord(string streamName, object data)
+        public int PutRecord(string streamName, string data)
         {
             string path = ValidateStreamExists(streamName);
 
@@ -192,8 +191,8 @@ namespace Enbilulu
             using (var conn = GetConnection(path))
             {
                 conn.Open();
-                string payload = JsonConvert.SerializeObject(data);
-                conn.Execute(INSERT_POINT, new { payload });
+         
+                conn.Execute(INSERT_POINT, new { payload = data });
 
                 return conn.ExecuteScalar<int>("select last_insert_rowid();");
             }
