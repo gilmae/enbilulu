@@ -11,7 +11,10 @@ namespace Enbilulu
             Get("/streams/{stream}", p =>
             {
                 var stream = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetStream(p.stream);
-
+                if (stream == null)
+                {
+                    return new Nancy.Responses.HtmlResponse(HttpStatusCode.NotFound);
+                }
 
                 var response =  new Nancy.Responses.JsonResponse<Stream>(stream, new JsonSerialiser(), this.Context.Environment);
                 response.ContentType = "application/json";
@@ -22,13 +25,19 @@ namespace Enbilulu
             Get("/points/{stream}/{point}/{limit}", p =>
             {
                 var data = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetRecords(p.stream, p.from, p.limit);
-                return Newtonsoft.Json.JsonConvert.SerializeObject(data);
+                var response = new Nancy.Responses.JsonResponse<Section>(data, new JsonSerialiser(), this.Context.Environment);
+                response.ContentType = "application/json";
+
+                return response;
             });
 
             Post("/streams/{stream}", p =>
             {
                 var stream = new Db(Environment.GetEnvironmentVariable("DataFolder")).CreateStream(p.stream);
-                return Newtonsoft.Json.JsonConvert.SerializeObject(stream);
+                var response = new Nancy.Responses.JsonResponse<Stream>(stream, new JsonSerialiser(), this.Context.Environment);
+                response.ContentType = "application/json";
+
+                return response;
             });
 
             Post("/points/{stream}", p =>
