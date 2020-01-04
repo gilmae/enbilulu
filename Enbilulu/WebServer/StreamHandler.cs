@@ -50,7 +50,14 @@ namespace Enbilulu
                 }
 
                 var Db = new Db(Environment.GetEnvironmentVariable("DataFolder"));
-                var point = Db.PutRecord(p.stream, data);
+                try
+                {
+                    var point = Db.PutRecord(p.stream, data);
+                }
+                catch (ArgumentException)
+                {
+                    return new Nancy.Responses.TextResponse(HttpStatusCode.NotFound, "Stream Not Found");
+                }
 
                 var stream = Db.GetStream(p.stream);
 

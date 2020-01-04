@@ -89,37 +89,9 @@ namespace Enbilulu
             }
         }
 
-        private string ValidateStreamExists(string streamName)
+        private string GetStreamPath(string streamName)
         {
-            if (string.IsNullOrEmpty(streamName))
-            {
-                throw new ArgumentNullException(nameof(streamName), $"{nameof(streamName)} cannot be null");
-            }
-
-            string path = Path.Join(_workingDirectory, $"{streamName}.db");
-
-            if (!File.Exists(path))
-            {
-                throw new ArgumentException($"{nameof(streamName)} does not exists", nameof(streamName));
-            }
-
-            return path;
-        }
-
-        private string ValidateStreamDoesNotExist(string streamName)
-        {
-            if (string.IsNullOrEmpty(streamName))
-            {
-                throw new ArgumentNullException(nameof(streamName), $"{nameof(streamName)} cannot be null");
-            }
-
-            string path = Path.Join(_workingDirectory, $"{streamName}.db");
-
-            if (File.Exists(path))
-            {
-                throw new ArgumentException($"{nameof(streamName)} already exists", nameof(streamName));
-            }
-            return path;
+            return Path.Join(_workingDirectory, $"{streamName}.db");
         }
 
         private IDbConnection GetConnection(string path)
@@ -129,7 +101,17 @@ namespace Enbilulu
 
         public Stream CreateStream(string streamName)
         {
-            string path = ValidateStreamDoesNotExist(streamName);
+            if (string.IsNullOrEmpty(streamName))
+            {
+                throw new ArgumentNullException(nameof(streamName), $"{nameof(streamName)} cannot be null");
+            }
+
+            string path = GetStreamPath(streamName);
+
+            if (File.Exists(path))
+            {
+                return GetStream(streamName);
+            }
 
             File.WriteAllBytes(path, new byte[0]);
 
@@ -142,17 +124,19 @@ namespace Enbilulu
             return new Stream();
         }
 
-        public int GetStreamPoint(string streamName, GetStreamPositionConfig config)
-        {
-            string path = ValidateStreamExists(streamName);
 
-            using (var conn = GetConnection(path))
-            {
-                conn.Open();
 
-                return GetStreamPoint(conn, config);
-            }
-        }
+        //private int GetStreamPoint(string streamName, GetStreamPositionConfig config)
+        //{
+        //    string path = GetStreamPath(streamName);
+
+        //    using (var conn = GetConnection(path))
+        //    {
+        //        conn.Open();
+
+        //        return GetStreamPoint(conn, config);
+        //    }
+        //}
 
         private int GetStreamPoint(IDbConnection conn, GetStreamPositionConfig config)
         {
@@ -170,7 +154,17 @@ namespace Enbilulu
 
         public Stream GetStream(string streamName)
         {
-            string path = ValidateStreamExists(streamName);
+            if (string.IsNullOrEmpty(streamName))
+            {
+                throw new ArgumentNullException(nameof(streamName), $"{nameof(streamName)} cannot be null");
+            }
+
+            string path = GetStreamPath(streamName);
+
+            if (!File.Exists(path))
+            {
+                return null;
+            }
 
             using (var conn = GetConnection(path))
             {
@@ -181,7 +175,17 @@ namespace Enbilulu
 
         public int PutRecord(string streamName, string data)
         {
-            string path = ValidateStreamExists(streamName);
+            if (string.IsNullOrEmpty(streamName))
+            {
+                throw new ArgumentNullException(nameof(streamName), $"{nameof(streamName)} cannot be null");
+            }
+
+            string path = GetStreamPath(streamName);
+
+            if (!File.Exists(path))
+            {
+                throw new ArgumentException (nameof(streamName), $"{nameof(streamName)} not found");
+            }
 
             if (data == null)
             {
@@ -200,7 +204,17 @@ namespace Enbilulu
 
         public Section GetRecords(string streamName, int id, int limit)
         {
-            string path = ValidateStreamExists(streamName);
+            if (string.IsNullOrEmpty(streamName))
+            {
+                throw new ArgumentNullException(nameof(streamName), $"{nameof(streamName)} cannot be null");
+            }
+
+            string path = GetStreamPath(streamName);
+
+            if (!File.Exists(path))
+            {
+                throw new ArgumentException(nameof(streamName), $"{nameof(streamName)} not found");
+            }
 
             using (var conn = GetConnection(path))
             {

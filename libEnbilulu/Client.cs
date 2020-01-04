@@ -22,9 +22,9 @@ namespace libEnbilulu
             var client = new RestClient(endpoint);
 
             var request = new RestRequest("/streams/{stream}", Method.POST);
-            request.AddParameter("stream", stream);
+            request.AddUrlSegment("stream", stream);
 
-            var response = client.ExecuteAsPost<Stream>(request, "POST");
+            var response = client.Post<Stream>(request);
 
             return response.Data;
         }
@@ -34,25 +34,30 @@ namespace libEnbilulu
             var client = new RestClient(endpoint);
 
             var request = new RestRequest("/points/{stream}", Method.POST);
-            request.AddParameter("stream", stream);
+            request.AddUrlSegment("stream", stream);
             request.AddJsonBody(data);
 
-            var response = client.ExecuteAsPost<Stream>(request, "POST");
+            var response = client.Post<Stream>(request);
 
             return response.Data;
         }
 
-        public Stream GetStream(string stream, dynamic data)
+        public Stream GetStream(string stream)
         {
             var client = new RestClient(endpoint);
 
-            var request = new RestRequest("/stream/{stream}", Method.GET);
-            request.AddParameter("stream", stream);
-            request.AddJsonBody(data);
+            var request = new RestRequest("/streams/{stream}", Method.GET);
+            request.AddUrlSegment("stream", stream);
 
-            var response = client.ExecuteAsPost<Stream>(request, "GET");
+            var response = client.Get<Stream>(request);
 
-            return response.Data;
+            if (response.IsSuccessful)
+            {
+                return response.Data;
+            }
+            return null;
+
+            
         }
 
         public Section GetRecordsAfter(string stream, int start, int limit)
@@ -60,11 +65,11 @@ namespace libEnbilulu
             var client = new RestClient(endpoint);
 
             var request = new RestRequest("/points/{stream}/{start}/{limit}", Method.GET);
-            request.AddParameter("stream", stream);
-            request.AddParameter("start", start);
-            request.AddParameter("limit", limit);
+            request.AddUrlSegment("stream", stream);
+            request.AddUrlSegment("start", start);
+            request.AddUrlSegment("limit", limit);
 
-            var response = client.ExecuteAsPost<Section>(request, "GET");
+            var response = client.Get<Section>(request);
 
             return response.Data;
         }
