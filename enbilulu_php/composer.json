@@ -1,0 +1,14 @@
+{
+    "name": "gilmae/enbilulu",
+    "description": "An api for working with sqlite as if it were a kinesis-esque stream",
+    "type": "library",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "gilmae",
+            "email": "avocadia@fastmail.fm"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
