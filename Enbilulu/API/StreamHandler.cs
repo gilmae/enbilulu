@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace Enbilulu
 {
-    public class StreamHandler : NancyModule
+    public class ApiHandler : NancyModule
     {
-        public StreamHandler()
+        public ApiHandler()
         {
             Get("/streams", p=>
             {
