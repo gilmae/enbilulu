@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Net;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 using RestSharp;
 
 
@@ -56,8 +55,6 @@ namespace libEnbilulu
                 return response.Data;
             }
             return null;
-
-            
         }
 
         public Section GetRecordsAfter(string stream, int start, int limit)
@@ -73,6 +70,5 @@ namespace libEnbilulu
 
             return response.Data;
         }
-
     }
 }

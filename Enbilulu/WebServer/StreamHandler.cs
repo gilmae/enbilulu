@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Nancy;
+using System.Collections.Generic;
 
 namespace Enbilulu
 {
@@ -8,7 +9,7 @@ namespace Enbilulu
     {
         public StreamHandler()
         {
-            Get("/streams/{stream}", p =>
+           Get("/streams/{stream}", p =>
             {
                 var stream = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetStream(p.stream);
                 if (stream == null)
@@ -24,7 +25,7 @@ namespace Enbilulu
 
             Get("/points/{stream}/{point}/{limit}", p =>
             {
-                var data = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetRecords(p.stream, p.from, p.limit);
+                var data = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetRecords(p.stream, p.point, p.limit);
                 var response = new Nancy.Responses.JsonResponse<Section>(data, new JsonSerialiser(), this.Context.Environment);
                 response.ContentType = "application/json";
 

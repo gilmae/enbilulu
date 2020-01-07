@@ -48,27 +48,27 @@ namespace Enbilulu
             public int Position { get; set; }
         }
 
-        private static int GetPointAfterX(IDbConnection conn, GetStreamPositionConfig config)
+        private static int? GetPointAfterX(IDbConnection conn, GetStreamPositionConfig config)
         {
-            return conn.QueryFirstOrDefault<int>(GET_POINT_AFTER_X, new { id = config.Position });
+            return conn.QueryFirstOrDefault<int?>(GET_POINT_AFTER_X, new { id = config.Position });
         }
 
-        private static int GetPointBeforeX(IDbConnection conn, GetStreamPositionConfig config)
+        private static int? GetPointBeforeX(IDbConnection conn, GetStreamPositionConfig config)
         {
-            return conn.QueryFirstOrDefault<int>(GET_POINT_BEFORE_X, new { id = config.Position });
+            return conn.QueryFirstOrDefault<int?>(GET_POINT_BEFORE_X, new { id = config.Position });
         }
 
-        private static int GetEarliestPoint(IDbConnection conn, GetStreamPositionConfig config)
+        private static int? GetEarliestPoint(IDbConnection conn, GetStreamPositionConfig config)
         {
-            return conn.QueryFirstOrDefault<int>(GET_EARLIEST_POINT);
+            return conn.QueryFirstOrDefault<int?>(GET_EARLIEST_POINT);
         }
 
-        private static int GetLastPoint(IDbConnection conn, GetStreamPositionConfig config)
+        private static int? GetLastPoint(IDbConnection conn, GetStreamPositionConfig config)
         {
-            return conn.QueryFirstOrDefault<int>(GET_LAST_POINT);
+            return conn.QueryFirstOrDefault<int?>(GET_LAST_POINT);
         }
 
-        private readonly Dictionary<FromPositionType, Func<IDbConnection, GetStreamPositionConfig, int>> MapFromPositionToQuery = new Dictionary<FromPositionType, Func<IDbConnection, GetStreamPositionConfig, int>> {
+        private readonly Dictionary<FromPositionType, Func<IDbConnection, GetStreamPositionConfig, int?>> MapFromPositionToQuery = new Dictionary<FromPositionType, Func<IDbConnection, GetStreamPositionConfig, int?>> {
             [FromPositionType.after_point] = GetPointAfterX,
             [FromPositionType.before_point] = GetPointBeforeX,
             [FromPositionType.start] = GetEarliestPoint,
@@ -138,7 +138,7 @@ namespace Enbilulu
         //    }
         //}
 
-        private int GetStreamPoint(IDbConnection conn, GetStreamPositionConfig config)
+        private int? GetStreamPoint(IDbConnection conn, GetStreamPositionConfig config)
         {
   
                 var task = MapFromPositionToQuery[config.Type];
@@ -221,18 +221,26 @@ namespace Enbilulu
                 conn.Open();
 
                 var points = conn.Query<Point>(GET_POINTS, new { id, limit });
-                
+                var lastPointInStream = GetStreamPoint(conn, new GetStreamPositionConfig{Type = FromPositionType.end});
 
-                if (points?.Count() > 0)
+                if (points?.Count() > 0 && limit > 0)
                 {
                     var lastPoint = points.Last().Id;
                     var nextPoint = GetStreamPoint(conn, new GetStreamPositionConfig { Type = FromPositionType.after_point, Position = lastPoint });
                     var millisecondsBehind = (int)(DateTime.Now - points.Last().Created_At).TotalMilliseconds;
 
+                    if (!nextPoint.HasValue)
+                    {
+                        return new Section { LastPoint = lastPoint, MillisecondsBehind = millisecondsBehind, Records = points };    
+                    }
                     return new Section { LastPoint = lastPoint, NextPoint = nextPoint, MillisecondsBehind = millisecondsBehind, Records = points };
                 }
                 else
                 {
+                    if (id > lastPointInStream)
+                    {
+                        return new Section { LastPoint = null, NextPoint = lastPointInStream, MillisecondsBehind = 0, Records = points }; 
+                    }
                     return new Section { LastPoint = null, NextPoint = id, MillisecondsBehind = 0, Records = points };
                 }
             }
