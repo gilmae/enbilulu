@@ -415,3 +415,4 @@ ASALocalRun/
 /tmp/
 .DS_Store
 
+*.db
