@@ -9,7 +9,17 @@ namespace Enbilulu
     {
         public StreamHandler()
         {
-           Get("/streams/{stream}", p =>
+            Get("/streams", p=>
+            {
+                var streams = new Db(Environment.GetEnvironmentVariable("DataFolder")).ListStreams();
+
+                 var response =  new Nancy.Responses.JsonResponse<IList<string>>(streams, new JsonSerialiser(), this.Context.Environment);
+                response.ContentType = "application/json";
+
+                return response;
+            });
+
+            Get("/streams/{stream}", p =>
             {
                 var stream = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetStream(p.stream);
                 if (stream == null)

@@ -99,6 +99,11 @@ namespace Enbilulu
             return new Microsoft.Data.Sqlite.SqliteConnection($"DataSource={path}");
         }
 
+        public IList<string> ListStreams()
+        {
+            return Directory.GetFiles(_workingDirectory, "*.db").Select(s=>Path.GetFileName(s).Replace(".db", "")) .ToList();
+        }
+
         public Stream CreateStream(string streamName)
         {
             if (string.IsNullOrEmpty(streamName))

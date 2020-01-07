@@ -70,5 +70,17 @@ namespace libEnbilulu
 
             return response.Data;
         }
+
+        public IList<string> ListStreams()
+        {
+            var client = new RestClient(endpoint);
+
+            var request = new RestRequest("/streams", Method.GET);
+
+            var response = client.Get<List<string>>(request);
+
+            return response.Data;
+        }
+
     }
 }
