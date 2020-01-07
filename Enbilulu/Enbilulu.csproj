@@ -19,14 +19,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="DbPoint.cs" />
-    <Compile Remove="Admin\AdminHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="API\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Admin\Index.html" />
   </ItemGroup>
   <ItemGroup>
     <None Update="WebServer\Index.html">
