@@ -10,7 +10,15 @@ namespace Enbilulu.WebServer
             {
                 var streams =  GetDb().ListStreams();
 
-                return View["WebServer/index.html", streams];
+                return View["Admin/index.html", streams];
+            });
+
+            Post("/admin/stream/create", p => {
+                var streamName = this.Request.Form["stream"];
+
+                GetDb().CreateStream(streamName);
+
+                return Response.AsRedirect("/admin");
             });
         }
 
