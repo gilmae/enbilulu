@@ -17,11 +17,13 @@ namespace Enbilulu
                               .SetBasePath(env.ContentRootPath);
 
             config = builder.Build();
+            
         }
 
         public void Configure(IApplicationBuilder app)
         {
             app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new Bootstrapper()));
+            
         }
     }
 }
