@@ -33,7 +33,7 @@ namespace Enbilulu
                 return response;
             });
 
-            Get("/points/{stream}/{point}/{limit}", p =>
+            Get("/streams/{stream}/{point}/{limit}", p =>
             {
                 var data = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetRecords(p.stream, p.point, p.limit);
                 var response = new Nancy.Responses.JsonResponse<Section>(data, new JsonSerialiser(), this.Context.Environment);
@@ -51,7 +51,7 @@ namespace Enbilulu
                 return response;
             });
 
-            Post("/points/{stream}", p =>
+            Post("/streams/{stream}/point", p =>
             {
                 string data = "";
 

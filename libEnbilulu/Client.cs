@@ -32,7 +32,7 @@ namespace libEnbilulu
         {
             var client = new RestClient(endpoint);
 
-            var request = new RestRequest("/points/{stream}", Method.POST);
+            var request = new RestRequest("/streams/{stream}/point", Method.POST);
             request.AddUrlSegment("stream", stream);
             request.AddJsonBody(data);
 
@@ -61,7 +61,7 @@ namespace libEnbilulu
         {
             var client = new RestClient(endpoint);
 
-            var request = new RestRequest("/points/{stream}/{start}/{limit}", Method.GET);
+            var request = new RestRequest("/streams/{stream}/{start}/{limit}", Method.GET);
             request.AddUrlSegment("stream", stream);
             request.AddUrlSegment("start", start);
             request.AddUrlSegment("limit", limit);
