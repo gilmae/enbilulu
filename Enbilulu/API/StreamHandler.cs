@@ -2,6 +2,7 @@
 using System.IO;
 using Nancy;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Enbilulu
 {
@@ -11,7 +12,7 @@ namespace Enbilulu
         {
             Get("/streams", p=>
             {
-                var streams = new Db(Environment.GetEnvironmentVariable("DataFolder")).ListStreams();
+                var streams = GetDb().ListStreams();
 
                  var response =  new Nancy.Responses.JsonResponse<IList<string>>(streams, new JsonSerialiser(), this.Context.Environment);
                 response.ContentType = "application/json";
@@ -21,7 +22,7 @@ namespace Enbilulu
 
             Get("/streams/{stream}", p =>
             {
-                var stream = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetStream(p.stream);
+                var stream = GetDb().GetStream(p.stream);
                 if (stream == null)
                 {
                     return new Nancy.Responses.HtmlResponse(HttpStatusCode.NotFound);
@@ -35,7 +36,7 @@ namespace Enbilulu
 
             Get("/streams/{stream}/{point}/{limit}", p =>
             {
-                var data = new Db(Environment.GetEnvironmentVariable("DataFolder")).GetRecords(p.stream, p.point, p.limit);
+                var data = GetDb().GetRecords(p.stream, p.point, p.limit);
                 var response = new Nancy.Responses.JsonResponse<Section>(data, new JsonSerialiser(), this.Context.Environment);
                 response.ContentType = "application/json";
 
@@ -44,7 +45,7 @@ namespace Enbilulu
 
             Post("/streams/{stream}", p =>
             {
-                var stream = new Db(Environment.GetEnvironmentVariable("DataFolder")).CreateStream(p.stream);
+                var stream = GetDb().CreateStream(p.stream);
                 var response = new Nancy.Responses.JsonResponse<Stream>(stream, new JsonSerialiser(), this.Context.Environment);
                 response.ContentType = "application/json";
 
@@ -60,7 +61,7 @@ namespace Enbilulu
                     data = reader.ReadToEnd();
                 }
 
-                var Db = new Db(Environment.GetEnvironmentVariable("DataFolder"));
+                var Db = GetDb();
                 try
                 {
                     var point = Db.PutRecord(p.stream, data);
@@ -77,6 +78,13 @@ namespace Enbilulu
 
                 return response;
             });
+
+            
+        }
+
+        private Db GetDb()
+        {
+            return new Db(Environment.GetEnvironmentVariable("DataFolder"));
         }
     }
 }
