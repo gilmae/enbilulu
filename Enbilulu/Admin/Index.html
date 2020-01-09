@@ -1,12 +1,9 @@
-﻿<html>
-<head>
-    <title>Enbilulu Admin</title>
-</head>
-<body>
-    <ul>
-        @Each
-            <li><a href="@Current">@Current</a></li>
-        @EndEach
-    </ul>
-</body>
-</html>
+﻿@Master['Admin/master.sshtml']
+
+@Section['Content']
+<ul>
+    @Each
+    <li><a href="@Current">@Current</a></li>
+    @EndEach
+</ul>
+@EndSection
