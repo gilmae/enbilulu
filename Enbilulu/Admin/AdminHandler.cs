@@ -1,21 +1,27 @@
 ﻿using System;
+using Enbilulu.Engine;
+using Enbilulu.Engine.Sqlite;
 using Nancy;
 namespace Enbilulu.Admin
 {
     public class AdminHandler : NancyModule
     {
-        public AdminHandler()
+        private IEnbiluluEngine _engine;
+
+        public AdminHandler(IEnbiluluEngine engine)
         {
+            _engine = engine;
+
             Get("/admin", p =>
             {
-                var streams =  GetDb().ListStreams();
+                var streams = _engine.ListStreams();
 
                 return View["Admin/index.html", streams];
             });
 
             Get("/admin/{stream}", p =>
             {
-                Stream stream = GetDb().GetStream(p.stream);
+                Stream stream = _engine.GetStream(p.stream);
 
                 var model = new ViewModels.Stream
                 {
@@ -30,15 +36,10 @@ namespace Enbilulu.Admin
             Post("/admin/stream/create", p => {
                 var streamName = this.Request.Form["stream"];
 
-                GetDb().CreateStream(streamName);
+                _engine.CreateStream(streamName);
 
                 return Response.AsRedirect("/admin/");
             });
-        }
-
-        private Db GetDb()
-        {
-            return new Db(Environment.GetEnvironmentVariable("DataFolder"));
         }
     }
 }

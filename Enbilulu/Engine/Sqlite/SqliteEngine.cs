@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Dapper;
-using Newtonsoft.Json;
 
-namespace Enbilulu
+namespace Enbilulu.Engine.Sqlite
 {
-    public class Db
+    public class SqliteEngine : IEnbiluluEngine
     {
         private const string STREAM_INIT = @"create table droplets (
            id integer PRIMARY KEY AUTOINCREMENT, 
@@ -34,52 +34,39 @@ namespace Enbilulu
 
         private const string GET_LAST_POINT = @"select max(id) as id from droplets";
 
-        public enum FromPositionType
+        private static async Task<int?> GetPointAfterX(IDbConnection conn, GetStreamPositionConfig config)
         {
-            after_point,
-            before_point,
-            start,
-            end
+            return await conn.QueryFirstOrDefaultAsync<int?>(GET_POINT_AFTER_X, new { id = config.Position });
         }
 
-        public struct GetStreamPositionConfig
+        private static async Task<int?> GetPointBeforeX(IDbConnection conn, GetStreamPositionConfig config)
         {
-            public FromPositionType Type { get; set; }
-            public int Position { get; set; }
+            return await conn.QueryFirstOrDefaultAsync<int?>(GET_POINT_BEFORE_X, new { id = config.Position });
         }
 
-        private static int? GetPointAfterX(IDbConnection conn, GetStreamPositionConfig config)
+        private static async Task<int?> GetEarliestPoint(IDbConnection conn, GetStreamPositionConfig config)
         {
-            return conn.QueryFirstOrDefault<int?>(GET_POINT_AFTER_X, new { id = config.Position });
+            return await conn.QueryFirstOrDefaultAsync<int?>(GET_EARLIEST_POINT);
         }
 
-        private static int? GetPointBeforeX(IDbConnection conn, GetStreamPositionConfig config)
+        private static async Task<int?> GetLastPoint(IDbConnection conn, GetStreamPositionConfig config)
         {
-            return conn.QueryFirstOrDefault<int?>(GET_POINT_BEFORE_X, new { id = config.Position });
+            return await conn.QueryFirstOrDefaultAsync<int?>(GET_LAST_POINT);
         }
 
-        private static int? GetEarliestPoint(IDbConnection conn, GetStreamPositionConfig config)
+        private readonly Dictionary<FromPositionType, Func<IDbConnection, GetStreamPositionConfig, Task<int?>>> MapFromPositionToQuery = new Dictionary<FromPositionType, Func<IDbConnection, GetStreamPositionConfig, Task<int?>>>
         {
-            return conn.QueryFirstOrDefault<int?>(GET_EARLIEST_POINT);
-        }
-
-        private static int? GetLastPoint(IDbConnection conn, GetStreamPositionConfig config)
-        {
-            return conn.QueryFirstOrDefault<int?>(GET_LAST_POINT);
-        }
-
-        private readonly Dictionary<FromPositionType, Func<IDbConnection, GetStreamPositionConfig, int?>> MapFromPositionToQuery = new Dictionary<FromPositionType, Func<IDbConnection, GetStreamPositionConfig, int?>> {
             [FromPositionType.after_point] = GetPointAfterX,
             [FromPositionType.before_point] = GetPointBeforeX,
             [FromPositionType.start] = GetEarliestPoint,
             [FromPositionType.end] = GetLastPoint
-        } ;
+        };
 
         private string _workingDirectory;
 
-        public Db() : this(Directory.GetCurrentDirectory()) { }
+        public SqliteEngine() : this(Environment.GetEnvironmentVariable("DataFolder")) { }
 
-        public Db(string workingDirectory)
+        public SqliteEngine(string workingDirectory)
         {
             _workingDirectory = Directory.GetCurrentDirectory();
 
@@ -99,12 +86,13 @@ namespace Enbilulu
             return new Microsoft.Data.Sqlite.SqliteConnection($"DataSource={path}");
         }
 
-        public IList<string> ListStreams()
+        public async Task<IList<string>> ListStreams()
         {
-            return Directory.GetFiles(_workingDirectory, "*.db").Select(s=>Path.GetFileName(s).Replace(".db", "")) .ToList();
+            var files = Directory.GetFiles(_workingDirectory, "*.db").Select(s => Path.GetFileName(s).Replace(".db", "")).ToList();
+            return await Task.FromResult<IList<string>>(files);
         }
 
-        public Stream CreateStream(string streamName)
+        public async Task<Stream> CreateStream(string streamName)
         {
             if (string.IsNullOrEmpty(streamName))
             {
@@ -115,7 +103,7 @@ namespace Enbilulu
 
             if (File.Exists(path))
             {
-                return GetStream(streamName);
+                return await GetStream(streamName);
             }
 
             File.WriteAllBytes(path, new byte[0]);
@@ -123,41 +111,27 @@ namespace Enbilulu
             using (var conn = GetConnection(path))
             {
                 conn.Open();
-                conn.Execute(STREAM_INIT);
+                await conn.ExecuteAsync(STREAM_INIT);
             }
 
             return new Stream();
         }
 
-
-
-        //private int GetStreamPoint(string streamName, GetStreamPositionConfig config)
-        //{
-        //    string path = GetStreamPath(streamName);
-
-        //    using (var conn = GetConnection(path))
-        //    {
-        //        conn.Open();
-
-        //        return GetStreamPoint(conn, config);
-        //    }
-        //}
-
-        private int? GetStreamPoint(IDbConnection conn, GetStreamPositionConfig config)
+        private async Task<int?> GetStreamPoint(IDbConnection conn, GetStreamPositionConfig config)
         {
-  
-                var task = MapFromPositionToQuery[config.Type];
 
-                if (task == null)
-                {
-                    return 0;
-                }
+            var task = MapFromPositionToQuery[config.Type];
 
-                return task.Invoke(conn, config);
-            
+            if (task == null)
+            {
+                return 0;
+            }
+
+            return await task.Invoke(conn, config);
+
         }
 
-        public Stream GetStream(string streamName)
+        public async Task<Stream> GetStream(string streamName)
         {
             if (string.IsNullOrEmpty(streamName))
             {
@@ -174,11 +148,11 @@ namespace Enbilulu
             using (var conn = GetConnection(path))
             {
                 conn.Open();
-                return conn.Query<Stream>(STREAM_DETAILS).FirstOrDefault();
+                return await conn.QueryFirstOrDefaultAsync<Stream>(STREAM_DETAILS);
             }
         }
 
-        public int PutRecord(string streamName, string data)
+        public async Task<int> PutRecord(string streamName, string data)
         {
             if (string.IsNullOrEmpty(streamName))
             {
@@ -189,7 +163,7 @@ namespace Enbilulu
 
             if (!File.Exists(path))
             {
-                throw new ArgumentException (nameof(streamName), $"{nameof(streamName)} not found");
+                throw new ArgumentException(nameof(streamName), $"{nameof(streamName)} not found");
             }
 
             if (data == null)
@@ -200,14 +174,14 @@ namespace Enbilulu
             using (var conn = GetConnection(path))
             {
                 conn.Open();
-         
+
                 conn.Execute(INSERT_POINT, new { payload = data });
 
-                return conn.ExecuteScalar<int>("select last_insert_rowid();");
+                return await conn.ExecuteScalarAsync<int>("select last_insert_rowid();");
             }
         }
 
-        public Section GetRecords(string streamName, int id, int limit)
+        public async Task<Section> GetRecords(string streamName, int id, int limit)
         {
             if (string.IsNullOrEmpty(streamName))
             {
@@ -225,29 +199,28 @@ namespace Enbilulu
             {
                 conn.Open();
 
-                var points = conn.Query<Point>(GET_POINTS, new { id, limit });
-                var lastPointInStream = GetStreamPoint(conn, new GetStreamPositionConfig{Type = FromPositionType.end});
+                var points = await conn.QueryAsync<Point>(GET_POINTS, new { id, limit });
+                var lastPointInStream = await GetStreamPoint(conn, new GetStreamPositionConfig { Type = FromPositionType.end });
 
                 if (points?.Count() > 0 && limit > 0)
                 {
                     var lastPoint = points.Last().Id;
-                    var nextPoint = GetStreamPoint(conn, new GetStreamPositionConfig { Type = FromPositionType.after_point, Position = lastPoint });
+                    var nextPoint = await GetStreamPoint(conn, new GetStreamPositionConfig { Type = FromPositionType.after_point, Position = lastPoint });
                     var millisecondsBehind = (int)(DateTime.Now - points.Last().Created_At).TotalMilliseconds;
 
                     if (!nextPoint.HasValue)
                     {
-                        return new Section { LastPoint = lastPoint, MillisecondsBehind = millisecondsBehind, Records = points };    
+                        return new Section { LastPoint = lastPoint, MillisecondsBehind = millisecondsBehind, Records = points };
                     }
                     return new Section { LastPoint = lastPoint, NextPoint = nextPoint, MillisecondsBehind = millisecondsBehind, Records = points };
                 }
-                else
+                
+                if (id > lastPointInStream)
                 {
-                    if (id > lastPointInStream)
-                    {
-                        return new Section { LastPoint = null, NextPoint = lastPointInStream, MillisecondsBehind = 0, Records = points }; 
-                    }
-                    return new Section { LastPoint = null, NextPoint = id, MillisecondsBehind = 0, Records = points };
+                    return new Section { LastPoint = null, NextPoint = lastPointInStream, MillisecondsBehind = 0, Records = points };
                 }
+                return new Section { LastPoint = null, NextPoint = id, MillisecondsBehind = 0, Records = points };
+
             }
 
         }

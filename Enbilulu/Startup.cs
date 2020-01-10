@@ -1,4 +1,8 @@
 ﻿using System;
+using Enbilulu.Engine;
+using Enbilulu.Engine.Sqlite;
+using Microsoft.Extensions.DependencyInjection;
+
 namespace Enbilulu
 {
     using Microsoft.AspNetCore.Builder;
@@ -22,8 +26,13 @@ namespace Enbilulu
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new Bootstrapper()));
+            app.UseOwin(x => x.UseNancy(opt => opt.Bootstrapper = new Bootstrapper(app.ApplicationServices)));
             
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddSingleton<IEnbiluluEngine, SqliteEngine>();
         }
     }
 }
