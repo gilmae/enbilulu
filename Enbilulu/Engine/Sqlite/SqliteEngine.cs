@@ -64,7 +64,7 @@ namespace Enbilulu.Engine.Sqlite
 
         private string _workingDirectory;
 
-        public SqliteEngine() : this(Environment.GetEnvironmentVariable("DataFolder")) { }
+        public SqliteEngine() : this(Environment.GetEnvironmentVariable("EnbiluluDataFolder")) { }
 
         public SqliteEngine(string workingDirectory)
         {
