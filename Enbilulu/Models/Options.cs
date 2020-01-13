@@ -40,14 +40,14 @@ namespace Enbilulu
 
     public class Options
     {
-        [Option('p', "port", Required =false, Default = 367)]
-        public int Port { get; set; }
+        [Option('p', "port", Required =false)]
+        public string Port { get; set; }
 
-        [Option('h', "host", Required = false, Default = "localhost")]
+        [Option('h', "host", Required = false)]
         public string Host { get; set; }
 
 
-        [Option('d', "data-folder", Required = false, Default = "")]
+        [Option('d', "data-folder", Required = false)]
         public string DataFolder { get; set; }
 
     }
