@@ -43,7 +43,7 @@ namespace Enbilulu
         [Option('p', "port", Required =false, Default = 367)]
         public int Port { get; set; }
 
-        [Option('h', "host", Required = false, Default = "0.0.0.0")]
+        [Option('h', "host", Required = false, Default = "localhost")]
         public string Host { get; set; }
 
 
