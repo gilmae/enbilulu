@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <PackageId>Enbilulu.Client</PackageId>
-    <Version>0.0.1</Version>
+    <Version>0.3</Version>
     <Authors>David Edgar</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/gilmae/Enbilulu</RepositoryUrl>
