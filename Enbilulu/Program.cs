@@ -12,7 +12,7 @@ namespace Enbilulu
         internal static readonly Options DefaultOptions = new Options
         {
             Host = "localhost",
-            Port = "367",
+            Port = "6700",
             DataFolder = Directory.GetCurrentDirectory()
         };
 
