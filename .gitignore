@@ -416,3 +416,5 @@ ASALocalRun/
 .DS_Store
 
 *.db
+*.swp
+nuget.config
