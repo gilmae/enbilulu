@@ -57,7 +57,7 @@ namespace libEnbilulu
             return null;
         }
 
-        public Section GetRecordsAfter(string stream, int start, int limit)
+        public Section GetRecordsFrom(string stream, int start, int limit)
         {
             var client = new RestClient(endpoint);
 
