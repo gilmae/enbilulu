@@ -6,9 +6,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 
-namespace Enbilulu.Engine.Sqlite
+namespace libEnbilulu
 {
-    public class SqliteEngine : IEnbiluluEngine
+    public class Enbilulu
     {
         private const string STREAM_INIT = @"create table droplets (
            id integer PRIMARY KEY AUTOINCREMENT, 
@@ -64,9 +64,9 @@ namespace Enbilulu.Engine.Sqlite
 
         private string _workingDirectory;
 
-        public SqliteEngine() : this(Environment.GetEnvironmentVariable("EnbiluluDataFolder")) { }
+        public Enbilulu() : this(Environment.GetEnvironmentVariable("EnbiluluDataFolder")) { }
 
-        public SqliteEngine(string workingDirectory)
+        public Enbilulu(string workingDirectory)
         {
             _workingDirectory = Directory.GetCurrentDirectory();
 

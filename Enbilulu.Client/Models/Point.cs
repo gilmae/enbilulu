@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Enbilulu
+namespace libEnbilulu.Models
 {
     public class Point
     {

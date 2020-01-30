@@ -3,7 +3,7 @@ using System.IO;
 using CommandLine;
 using Microsoft.AspNetCore.Hosting;
 
-namespace Enbilulu
+namespace EnbiluluServer
 {
     class Program
     {

@@ -2,16 +2,14 @@
 using System.IO;
 using Nancy;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using Enbilulu.Engine;
-using Enbilulu.Engine.Sqlite;
+using libEnbilulu;
 
-namespace Enbilulu
+namespace EnbiluluServer
 {
     public class ApiHandler : NancyModule
     {
-        private IEnbiluluEngine _engine;
-        public ApiHandler(IEnbiluluEngine engine)
+        private Enbilulu _engine;
+        public ApiHandler(Enbilulu engine)
         {
 
             _engine = engine;
@@ -34,7 +32,7 @@ namespace Enbilulu
                 }
 
                 var response =
-                    new Nancy.Responses.JsonResponse<Stream>(stream, new JsonSerialiser(), this.Context.Environment)
+                    new Nancy.Responses.JsonResponse<libEnbilulu.Stream>(stream, new JsonSerialiser(), this.Context.Environment)
                     {
                         ContentType = "application/json"
                     };
@@ -58,7 +56,7 @@ namespace Enbilulu
             {
                 var stream = await _engine.CreateStream(p.stream);
                 var response =
-                    new Nancy.Responses.JsonResponse<Stream>(stream, new JsonSerialiser(), this.Context.Environment)
+                    new Nancy.Responses.JsonResponse<libEnbilulu.Stream>(stream, new JsonSerialiser(), this.Context.Environment)
                     {
                         ContentType = "application/json"
                     };
@@ -87,7 +85,7 @@ namespace Enbilulu
                 var stream = await _engine.GetStream(p.stream);
 
                 var response =
-                    new Nancy.Responses.JsonResponse<Stream>(stream, new JsonSerialiser(), this.Context.Environment)
+                    new Nancy.Responses.JsonResponse<libEnbilulu.Stream>(stream, new JsonSerialiser(), this.Context.Environment)
                     {
                         ContentType = "application/json"
                     };

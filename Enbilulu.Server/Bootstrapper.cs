@@ -1,11 +1,11 @@
 ﻿using System;
-using Enbilulu.Engine;
+using libEnbilulu;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Configuration;
 using Nancy.TinyIoc;
 
-namespace Enbilulu
+namespace EnbiluluServer
 {
     public class Bootstrapper: DefaultNancyBootstrapper
     {
@@ -18,7 +18,7 @@ namespace Enbilulu
         protected override void ConfigureApplicationContainer(TinyIoCContainer container)
         {
             base.ConfigureApplicationContainer(container);
-            container.Register(_serviceProvider.GetService(typeof(IEnbiluluEngine)));
+            container.Register(_serviceProvider.GetService(typeof(Enbilulu)));
         }
 
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
