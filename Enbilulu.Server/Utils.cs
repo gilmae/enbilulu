@@ -2,7 +2,7 @@
 using System.Linq;
 
 
-namespace Enbilulu
+namespace EnbiluluServer
 {
     public static class Utils
     {

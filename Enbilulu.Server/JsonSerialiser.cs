@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Nancy.Responses.Negotiation;
 
-namespace Enbilulu
+namespace EnbiluluServer
 {
     public class JsonSerialiser : Nancy.ISerializer
     {

@@ -1,4 +1,4 @@
-﻿namespace Enbilulu.Engine.Sqlite
+﻿namespace libEnbilulu
 {
     public struct GetStreamPositionConfig
     {

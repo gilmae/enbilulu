@@ -1,9 +1,8 @@
 ﻿using System;
-using Enbilulu.Engine;
-using Enbilulu.Engine.Sqlite;
+using libEnbilulu;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Enbilulu
+namespace EnbiluluServer
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -32,7 +31,7 @@ namespace Enbilulu
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IEnbiluluEngine, SqliteEngine>();
+            services.AddSingleton<Enbilulu, Enbilulu>();
         }
     }
 }

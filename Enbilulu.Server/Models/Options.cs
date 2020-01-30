@@ -1,7 +1,7 @@
 ﻿using System;
 using CommandLine;
 
-namespace Enbilulu
+namespace EnbiluluServer
 {
     //public abstract class BaseOptions
     //{
