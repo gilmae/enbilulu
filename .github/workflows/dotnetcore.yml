@@ -17,3 +17,7 @@ jobs:
       run: |
         dotnet build --configuration Release
         dotnet pack --configuration Release
+    - uses: actions/upload-artifact@v2
+      with: 
+        name: libEnbilulu
+        path: /home/runner/work/enbilulu/enbilulu/libEnbilulu/bin/Release/libEnbilulu.*.nupkg
