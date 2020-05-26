@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <PackageId>libEnbilulu</PackageId>
+    <Version>0.9.3</Version>
+    <Authors>David Edgar</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/gilmae/Enbilulu</RepositoryUrl>
+    <ReleaseVersion>0.9.3</ReleaseVersion>
+    <PackOnBuild>true</PackOnBuild>
+    <PackageVersion>0.9.3</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
