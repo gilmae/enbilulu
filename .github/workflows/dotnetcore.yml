@@ -18,6 +18,8 @@ jobs:
         dotnet build --configuration Release
         dotnet pack --configuration Release
     - uses: actions/upload-artifact@v2
+      env: # Or as an environment variable
+        nuget_publish_token: ${{ secrets.NUGET_PUBLISH_TOKEN }}
       with: 
         name: libEnbilulu
         path: /home/runner/work/enbilulu/enbilulu/libEnbilulu/bin/Release/libEnbilulu.*.nupkg
@@ -26,4 +28,4 @@ jobs:
         nupkg-path:  './artifacts/*.nupkg'
         repo-owner:  'gilmae'
         gh-user:  'gilmae'
-        token:  ${{ secrets.NUGET_PUBLISH_TOKEN }}
+        token:  ${env:nuget_publish_token}
