@@ -21,3 +21,9 @@ jobs:
       with: 
         name: libEnbilulu
         path: /home/runner/work/enbilulu/enbilulu/libEnbilulu/bin/Release/libEnbilulu.*.nupkg
+    - uses: tanaka-takayoshi/nuget-publish-to-github-packages-action@v2.1
+      with:
+        nupkg-path:  './artifacts/*.nupkg'
+        repo-owner:  'gilmae'
+        gh-user:  'gilmae'
+        token:  ${{ secrets.NUGET_PUBLISH_TOKEN }}
