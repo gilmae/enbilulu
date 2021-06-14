@@ -14,9 +14,10 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Build with dotnet
-      env: # Or as an environment variable
-        nuget_publish_token: ${{ secrets.NUGET_PUBLISH_TOKEN }}
       run: |
         dotnet build --configuration Release
-        dotnet pack --configuration Release\
-        dotnet nuget push /home/runner/work/enbilulu/enbilulu/libEnbilulu/bin/Release/libEnbilulu.*.nupkg -s github -k ${env:nuget_publish_token}
+        dotnet pack --configuration Release
+    - uses: actions/upload-artifact@v2
+      with: 
+        name: libEnbilulu
+        path: /home/runner/work/enbilulu/enbilulu/libEnbilulu/bin/Release/libEnbilulu.*.nupkg
