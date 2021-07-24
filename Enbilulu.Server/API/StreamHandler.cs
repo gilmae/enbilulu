@@ -1,99 +1,74 @@
 ﻿using System;
-using System.IO;
-using Nancy;
-using System.Collections.Generic;
 using libEnbilulu;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace EnbiluluServer
 {
-    public class ApiHandler : NancyModule
+    [Route("/streams")]
+    [ApiController]
+    public class StreamsHandler : ControllerBase
     {
         private Enbilulu _engine;
-        public ApiHandler(Enbilulu engine)
+        public StreamsHandler(Enbilulu engine)
         {
-
             _engine = engine;
-            Get("/streams", async (p, ct) =>
-            {
-                var streams = await _engine.ListStreams();
-
-                var response = new Nancy.Responses.JsonResponse<IList<string>>(streams, new JsonSerialiser(), this.Context.Environment);
-                response.ContentType = "application/json";
-
-                return response;
-            });
-
-            Get("/streams/{stream}", async (p, ct) =>
-            {
-                var stream = await _engine.GetStream(p.stream);
-                if (stream == null)
-                {
-                    return new Nancy.Responses.HtmlResponse(HttpStatusCode.NotFound);
-                }
-
-                var response =
-                    new Nancy.Responses.JsonResponse<libEnbilulu.Stream>(stream, new JsonSerialiser(), this.Context.Environment)
-                    {
-                        ContentType = "application/json"
-                    };
-
-                return response;
-            });
-
-            Get("/streams/{stream}/{point}/{limit}", async (p, ct) =>
-            {
-                var data = await _engine.GetRecords(p.stream, p.point, p.limit);
-                var response =
-                    new Nancy.Responses.JsonResponse<Section>(data, new JsonSerialiser(), this.Context.Environment)
-                    {
-                        ContentType = "application/json"
-                    };
-
-                return response;
-            });
-
-            Post("/streams/{stream}", async (p, ct) =>
-            {
-                var stream = await _engine.CreateStream(p.stream);
-                var response =
-                    new Nancy.Responses.JsonResponse<libEnbilulu.Stream>(stream, new JsonSerialiser(), this.Context.Environment)
-                    {
-                        ContentType = "application/json"
-                    };
-
-                return response;
-            });
-
-            Post("/streams/{stream}/point", async (p, ct) =>
-            {
-                string data = "";
-
-                using (StreamReader reader = new StreamReader(this.Request.Body))
-                {
-                    data = reader.ReadToEnd();
-                }
-
-                try
-                {
-                    var point = await _engine.PutRecord(p.stream, data);
-                }
-                catch (ArgumentException)
-                {
-                    return new Nancy.Responses.TextResponse(HttpStatusCode.NotFound, "Stream Not Found");
-                }
-
-                var stream = await _engine.GetStream(p.stream);
-
-                var response =
-                    new Nancy.Responses.JsonResponse<libEnbilulu.Stream>(stream, new JsonSerialiser(), this.Context.Environment)
-                    {
-                        ContentType = "application/json"
-                    };
-
-                return response;
-            });
-
-
         }
+
+        [HttpGet]
+        public async Task<ActionResult> GetStreams() {
+
+            var streams = await _engine.ListStreams();
+
+            return Ok(streams);
+        }
+
+        [HttpGet]
+        [Route("{name}")]
+        public async Task<ActionResult> GetStream(string name)
+        {
+            var stream = await _engine.GetStream(name);
+            if (stream == null)
+            {
+                return NotFound();
+            }
+            return Ok(stream);
+        }
+
+        [HttpGet]
+        [Route("{name}/{point}/{limit}")]
+        public async Task<ActionResult> GetRecords(string name, int point, int limit)
+        {
+            var data = await _engine.GetRecords(name, point, limit);
+            return Ok(data);
+        }
+
+        [HttpPost]
+        [Route("{name}")]
+        public async Task<ActionResult> CreateStream([FromRoute] string name)
+        {
+            var stream = await _engine.CreateStream(name);
+            return Ok(stream);
+        }
+
+        [HttpPost]
+        [Route("{name}/point")]
+        public async Task<ActionResult> PutRecord(string name, [FromBody] string data)
+        {
+            try
+            {
+                var point = await _engine.PutRecord(name, data);
+            }
+            catch (ArgumentException)
+            {
+                return NotFound("Stream Not Found");
+            }
+
+            var stream = await _engine.GetStream(name);
+
+            return Ok(stream);
+        }
+
+
     }
 }

@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <PackageId>Enbilulu.Client</PackageId>
     <Version>0.9.1</Version>
     <Authors>David Edgar</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/gilmae/Enbilulu</RepositoryUrl>
-    <ReleaseVersion>0.9.1</ReleaseVersion>
+    <ReleaseVersion>0.9</ReleaseVersion>
     <PackOnBuild>true</PackOnBuild>
     <PackageVersion>0.9.3</PackageVersion>
   </PropertyGroup>
