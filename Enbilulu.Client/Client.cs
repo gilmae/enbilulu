@@ -9,16 +9,20 @@ namespace libEnbilulu
 
     public class Client
     {
-        private Uri endpoint;
+        public Uri Endpoint { get; set; }
+
+        public Client()
+        {
+        }
 
         public Client(string host, int port = 16016)
         {
-            endpoint = new Uri($"{host}:{port}");
+            Endpoint = new Uri($"{host}:{port}");
         }
 
         public Stream CreateStream(string stream)
         {
-            var client = new RestClient(endpoint);
+            var client = new RestClient(Endpoint);
 
             var request = new RestRequest("/streams/{stream}", Method.POST);
             request.AddUrlSegment("stream", stream);
@@ -30,7 +34,7 @@ namespace libEnbilulu
 
         public Stream PutRecord(string stream, dynamic data)
         {
-            var client = new RestClient(endpoint);
+            var client = new RestClient(Endpoint);
 
             var request = new RestRequest("/streams/{stream}/point", Method.POST);
             request.AddUrlSegment("stream", stream);
@@ -43,7 +47,7 @@ namespace libEnbilulu
 
         public Stream GetStream(string stream)
         {
-            var client = new RestClient(endpoint);
+            var client = new RestClient(Endpoint);
 
             var request = new RestRequest("/streams/{stream}", Method.GET);
             request.AddUrlSegment("stream", stream);
@@ -59,7 +63,7 @@ namespace libEnbilulu
 
         public Section GetRecordsFrom(string stream, int start, int limit)
         {
-            var client = new RestClient(endpoint);
+            var client = new RestClient(Endpoint);
 
             var request = new RestRequest("/streams/{stream}/{start}/{limit}", Method.GET);
             request.AddUrlSegment("stream", stream);
@@ -73,7 +77,7 @@ namespace libEnbilulu
 
         public IList<string> ListStreams()
         {
-            var client = new RestClient(endpoint);
+            var client = new RestClient(Endpoint);
 
             var request = new RestRequest("/streams", Method.GET);
 
