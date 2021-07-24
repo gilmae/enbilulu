@@ -2,14 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <OutputType>Library</OutputType>
     <PackageId>Enbilulu.Client</PackageId>
     <Version>0.9.5</Version>
     <Authors>David Edgar</Authors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageDescription>This package is a client library for working with the Enbilulu server</PackageDescription>
     <RepositoryUrl>https://github.com/gilmae/Enbilulu</RepositoryUrl>
-    <ReleaseVersion>0.9.5</ReleaseVersion>
-    <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>0.9.5</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
