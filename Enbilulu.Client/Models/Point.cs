@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Enbilulu.Client.Models
+namespace Enbilulu.Models
 {
     public class Point
     {

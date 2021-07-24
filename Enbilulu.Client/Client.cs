@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using RestSharp;
 
 
-namespace Enbilulu.Client
+namespace Enbilulu
 {
     using Models;
 
