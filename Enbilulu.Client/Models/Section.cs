@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace libEnbilulu.Models
+namespace Enbilulu.Client.Models
 {
     public class Section
     {
