@@ -1,10 +1,6 @@
-name: .NET
+name: .NET Core
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push]
 
 jobs:
   build:
@@ -12,29 +8,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - 
+    -
       name: Prep
       run: |
           echo "BUILD_VER=1.0.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
           echo "CONFIG=Release" >> $GITHUB_ENV
           echo "NUGET_URL=https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" >> $GITHUB_ENV
           echo "SLN=Enbilulu.sln" >> $GITHUB_ENV
-    - uses: actions/checkout@v2
-    - name: Setup .NET
+    - uses: actions/checkout@v1
+    - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
-        source-url: ${{ env.NUGET_URL }}
-      env:
-        NUGET_AUTH_TOKEN: ${{ secrets.NUGET_PUBLISH_TOKEN }}
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
+        dotnet-version: 5.0.302
+    - name: Build with dotnet
       run: |
-        dotnet build --no-restore --configuration Release /p:VersionPrefix=${{ env.BUILD_VER }}
+        dotnet build --configuration Release /p:VersionPrefix=${{ env.BUILD_VER }}
         dotnet pack --configuration Release  /p:Version=${{ env.BUILD_VER }}
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
     - name: Publish
       run: |
         dotnet nuget push **/*.nupkg \
