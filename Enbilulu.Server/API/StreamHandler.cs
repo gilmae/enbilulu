@@ -2,6 +2,7 @@
 using libEnbilulu;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace EnbiluluServer
 {
@@ -53,8 +54,15 @@ namespace EnbiluluServer
 
         [HttpPost]
         [Route("{name}/point")]
-        public async Task<ActionResult> PutRecord(string name, [FromBody] string data)
+        public async Task<ActionResult> PutRecord(string name)
         {
+            string data = "";
+
+            using (StreamReader reader = new StreamReader(this.Request.Body))
+            {
+                data = await reader.ReadToEndAsync();
+            }
+
             try
             {
                 var point = await _engine.PutRecord(name, data);

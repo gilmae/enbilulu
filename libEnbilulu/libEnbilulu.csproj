@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageId>libEnbilulu</PackageId>
-    <Version>0.9.3</Version>
+    <Version>1.0</Version>
     <Authors>David Edgar</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/gilmae/Enbilulu</RepositoryUrl>
-    <ReleaseVersion>0.9.5</ReleaseVersion>
+    <ReleaseVersion>1.0</ReleaseVersion>
     <PackOnBuild>true</PackOnBuild>
-    <PackageVersion>0.9.3</PackageVersion>
+    <PackageVersion>1.0</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.0.90" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="Microsoft.Data.SQLite" Version="3.1.0" />
   </ItemGroup>
 

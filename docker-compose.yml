@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  enbilulu:
+    image: enbilulu:latest
+    ports:
+      - 367:80
+    volumes:
+      - streams:/streams
+    environment:
+      EnbiluluDataFolder: /streams
+    
+volumes:
+  streams: {}
+
