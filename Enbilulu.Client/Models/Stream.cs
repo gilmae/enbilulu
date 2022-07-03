@@ -1,9 +1,8 @@
 ﻿using System;
-namespace Enbilulu.Models
+namespace Enbilulu.Models;
+
+public class Stream
 {
-    public class Stream
-    {
-        public int Points { get; set; }
-        public int Last_Point { get; set; }
-    }
+    public int Points { get; set; }
+    public int Last_Point { get; set; }
 }
