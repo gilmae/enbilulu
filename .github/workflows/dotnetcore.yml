@@ -11,7 +11,7 @@ jobs:
     -
       name: Prep
       run: |
-          echo "BUILD_VER=1.0.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
+          echo "BUILD_VER=1.1.$GITHUB_RUN_NUMBER" >> $GITHUB_ENV
           echo "CONFIG=Release" >> $GITHUB_ENV
           echo "NUGET_URL=https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" >> $GITHUB_ENV
           echo "SLN=Enbilulu.sln" >> $GITHUB_ENV
