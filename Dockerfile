@@ -2,7 +2,6 @@
 WORKDIR /app
 
 # copy everything else and build app
-COPY nuget.config .
 COPY Enbilulu.Server/. ./Enbilulu.Server/
 COPY libEnbilulu/. ./libEnbilulu/
 RUN dotnet restore libEnbilulu
