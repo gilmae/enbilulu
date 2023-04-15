@@ -29,7 +29,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            - ${{ env.BUILD_VER }}
-            - latest
+          tags: ${{ env.BUILD_VER }}
           labels: ${{ steps.meta.outputs.labels }}
