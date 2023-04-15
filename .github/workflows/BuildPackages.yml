@@ -2,7 +2,7 @@ name: Build Enbilulu Docker image
 
 on: 
   push:
-    branches: ['main']
+    branches: ['main', 'build_defs']
 
 env:
   REGISTRY: ghcr.io
