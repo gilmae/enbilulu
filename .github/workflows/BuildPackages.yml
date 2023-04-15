@@ -29,7 +29,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            - ghcr.io/${{ github.repository }}:${{ env.BUILD_VER }}
-            - - ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/${{ github.repository }}:${{ env.BUILD_VER }}
           labels: ${{ steps.meta.outputs.labels }}
