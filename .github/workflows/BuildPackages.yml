@@ -7,6 +7,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{github.repository}}
+  BUILD_VER: 1.2.${{GITHUB_RUN_NUMBER}}
 
 jobs:
   build-docker:
@@ -34,4 +35,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:1.2.${{GITHUB_RUN_NUMBER}}"
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{env.BUILD_VER}}}}
